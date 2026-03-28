@@ -11,9 +11,9 @@
 
 TriTree::TriTree(PNG& imIn) {
 	// REPLACE THE LINEs BELOW WITH YOUR CODE
-	width = 0;
-	height = 0;
-	root = nullptr;
+	width = imIn.width();
+	height = imIn.height();
+	root = BuildNode(imIn, make_pair(0, 0), width, height);
 }
 
 void TriTree::Clear() { // private
@@ -39,7 +39,7 @@ void TriTree::Prune(double tol) {
 
 int TriTree::NumLeaves() const {
 	// REPLACE THE LINE BELOW WITH YOUR CODE
-	return 0;
+	return NumLeaves_Helper(root);
 }
 
 Node* TriTree::BuildNode(PNG& im, pair<int, int> ul, int w, int h) { // private
@@ -221,3 +221,12 @@ Node* TriTree::BuildNode(PNG& im, pair<int, int> ul, int w, int h) { // private
 }
 
 /*==== ALSO IMPLEMENT ANY PRIVATE FUNCTIONS YOU HAVE DECLARED ====*/
+int TriTree::NumLeaves_Helper(Node* nd) const {
+	if (nd == nullptr) {
+		return 0;
+	}
+	if (nd->A == nullptr && nd->B == nullptr && nd->C == nullptr) {
+		return 1;
+	}
+	return NumLeaves_Helper(nd->A) + NumLeaves_Helper(nd->B) + NumLeaves_Helper(nd->C);
+}

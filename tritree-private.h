@@ -10,3 +10,4 @@
  * starting from line 220 of tritree.h
 **/
 
+int NumLeaves_Helper(Node* nd) const;
