@@ -14,3 +14,6 @@ int NumLeaves_Helper(Node* nd) const;
 void Clear_Helper(Node* nd);
 Node* Copy_Helper(const Node* otherNode);
 void Render_Helper(PNG& png, const Node* nd) const;
+void transpose(Node* root);
+void prunehelper(Node* root, double tol);
+bool canPrune(const Node* root, const RGBAPixel& avg, double tol) const;

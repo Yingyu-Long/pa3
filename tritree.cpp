@@ -18,12 +18,20 @@ TriTree::TriTree(PNG& imIn) {
 
 void TriTree::Clear() { // private
 	Clear_Helper(root);
+	root = nullptr;
 }
 
 void TriTree::Copy(const TriTree& other) { // private
 	width = other.width;
 	height = other.height;
+	if (other.root == nullptr)
+	{
+		root = nullptr;
+		return;
+	}
+	else{
 	root = Copy_Helper(other.root);
+	}
 }
 
 PNG TriTree::Render() const {
@@ -33,20 +41,24 @@ PNG TriTree::Render() const {
 }
 
 void TriTree::Transpose() {
-	// YOUR CODE HERE
+	transpose(root);
+	int temp = height;
+	height = width;
+	width = temp;
 }
 
 void TriTree::Prune(double tol) {
-	// YOUR CODE HERE
+	if(root == nullptr){
+		return;
+	}
+	prunehelper(root, tol);	
 }
 
 int TriTree::NumLeaves() const {
-	// REPLACE THE LINE BELOW WITH YOUR CODE
 	return NumLeaves_Helper(root);
 }
 
 Node* TriTree::BuildNode(PNG& im, pair<int, int> ul, int w, int h) { // private
-	// REPLACE THE LINE BELOW WITH YOUR CODE
 	if(w == 1 && h == 1) {
 		Node* leaf = new Node(ul, w, h);
 		leaf->avg = *im.getPixel(ul.first, ul.second);
@@ -270,5 +282,53 @@ void TriTree::Render_Helper(PNG& png, const Node* nd) const {
 		Render_Helper(png, nd->A);
 		Render_Helper(png, nd->B);
 		Render_Helper(png, nd->C);
+	}
+}
+
+void TriTree::transpose(Node* root){
+	if(root == nullptr){
+		return;
+	}
+	int upperleftX = root->upperleft.first;
+	int upperleftY = root->upperleft.second;
+	root->upperleft.first = upperleftY;
+	root->upperleft.second = upperleftX;
+	int temp = root->height;
+	root->height = root->width;
+	root->width = temp;
+	transpose(root->A);
+	transpose(root->B);
+	transpose(root->C);
+}
+
+bool TriTree::canPrune(const Node* root, const RGBAPixel& avg, double tol) const {
+	if (root == nullptr) {
+		return true;
+	}
+	if (root->A == nullptr && root->B == nullptr && root->C == nullptr) {
+		return avg.dist(root->avg) <= tol;
+	}
+	return canPrune(root->A, avg, tol) && canPrune(root->B, avg, tol) && canPrune(root->C, avg, tol);
+}
+
+void  TriTree::prunehelper(Node* root, double tol) {
+	if (root == nullptr) {
+		return;
+	}
+    if (root->A == nullptr && root->B == nullptr && root->C == nullptr) {
+        return;
+    }
+	
+	if (canPrune(root, root->avg, tol)) {
+		Clear_Helper(root->A);
+		Clear_Helper(root->B);
+		Clear_Helper(root->C);
+		root->A = nullptr;
+		root->B = nullptr;
+		root->C = nullptr;
+	} else {
+		prunehelper(root->A, tol);
+		prunehelper(root->B, tol);
+		prunehelper(root->C, tol);
 	}
 }
