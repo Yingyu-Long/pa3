@@ -17,11 +17,13 @@ TriTree::TriTree(PNG& imIn) {
 }
 
 void TriTree::Clear() { // private
-	// YOUR CODE HERE
+	Clear_Helper(root);
 }
 
 void TriTree::Copy(const TriTree& other) { // private
-	// YOUR CODE HERE
+	width = other.width;
+	height = other.height;
+	root = Copy_Helper(other.root);
 }
 
 PNG TriTree::Render() const {
@@ -229,4 +231,26 @@ int TriTree::NumLeaves_Helper(Node* nd) const {
 		return 1;
 	}
 	return NumLeaves_Helper(nd->A) + NumLeaves_Helper(nd->B) + NumLeaves_Helper(nd->C);
+}
+
+void TriTree::Clear_Helper(Node* nd) {
+	if (nd == nullptr) {
+		return;
+	}
+	Clear_Helper(nd->A);
+	Clear_Helper(nd->B);
+	Clear_Helper(nd->C);
+	delete nd;
+}
+
+Node* TriTree::Copy_Helper(const Node* otherNode) {
+	if (otherNode == nullptr) {
+		return nullptr;
+	}
+	Node* newNode = new Node(otherNode->upperleft, otherNode->width, otherNode->height);
+	newNode->avg = otherNode->avg;
+	newNode->A = Copy_Helper(otherNode->A);
+	newNode->B = Copy_Helper(otherNode->B);
+	newNode->C = Copy_Helper(otherNode->C);
+	return newNode;
 }
