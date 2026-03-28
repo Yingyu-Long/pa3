@@ -13,3 +13,4 @@
 int NumLeaves_Helper(Node* nd) const;
 void Clear_Helper(Node* nd);
 Node* Copy_Helper(const Node* otherNode);
+void Render_Helper(PNG& png, const Node* nd) const;

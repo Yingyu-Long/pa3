@@ -27,8 +27,9 @@ void TriTree::Copy(const TriTree& other) { // private
 }
 
 PNG TriTree::Render() const {
-	// REPLACE THE LINE BELOW WITH YOUR CODE
-	return PNG();
+	PNG newPNG(width, height);
+	Render_Helper(newPNG, root);
+	return newPNG;
 }
 
 void TriTree::Transpose() {
@@ -253,4 +254,21 @@ Node* TriTree::Copy_Helper(const Node* otherNode) {
 	newNode->B = Copy_Helper(otherNode->B);
 	newNode->C = Copy_Helper(otherNode->C);
 	return newNode;
+}
+
+void TriTree::Render_Helper(PNG& png, const Node* nd) const {
+	if(nd == nullptr) {
+		return;
+	}
+	if (nd->A == nullptr && nd->B == nullptr && nd->C == nullptr) {
+		for (int i = 0; i < nd->width; i++) {
+			for (int j = 0; j < nd->height; j++) {
+				*png.getPixel(nd->upperleft.first + i, nd->upperleft.second + j) = nd->avg;
+			}
+		}
+	} else {
+		Render_Helper(png, nd->A);
+		Render_Helper(png, nd->B);
+		Render_Helper(png, nd->C);
+	}
 }
